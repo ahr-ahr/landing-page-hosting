@@ -9,6 +9,45 @@
       rel="stylesheet"
     />
     <style>
+      /* Centering the loading animation */
+      .loading-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 9999;
+      }
+
+      /* Spinner animation */
+      .spinner {
+        border: 6px solid #f3f3f3; /* Light gray */
+        border-top: 6px solid #3498db; /* Blue */
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        animation: spin 1s linear infinite;
+      }
+
+      /* Keyframes for spinning animation */
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* Hide the loading animation by default */
+      .hidden {
+        display: none;
+      }
+
       select {
         background-color: #f9fafb;
         color: #111827;
@@ -28,6 +67,18 @@
     />
     <script src="https://unpkg.com/@tabler/icons@1.79.1/tabler-icons.min.js"></script>
     <script>
+      // Show loading animation when the page is loading or reloading
+      document.addEventListener("DOMContentLoaded", function () {
+        document.getElementById("loading").classList.remove("hidden");
+      });
+
+      // Hide loading animation after 3 seconds, even if the page is fully loaded
+      window.addEventListener("load", function () {
+        setTimeout(function () {
+          document.getElementById("loading").classList.add("hidden");
+        }, 3000); // 3000ms = 3 seconds
+      });
+
       function toggleMobileMenu() {
         const mobileNav = document.getElementById("mobile-navigation");
         mobileNav.classList.toggle("hidden");
@@ -132,6 +183,11 @@
     </script>
   </head>
   <body class="bg-gray-50 dark:bg-gray-900 dark:text-white">
+    <!-- Loading Animation -->
+    <div id="loading" class="loading-container hidden">
+      <div class="spinner"></div>
+    </div>
+
     <!-- Navbar -->
     <header class="bg-white dark:bg-gray-800 shadow sticky top-0 z-50">
       <div class="container mx-auto flex items-center justify-between p-4">
