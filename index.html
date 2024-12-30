@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lyeen Store | Minecraft Server Hosting</title>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      select {
+        background-color: #f9fafb;
+        color: #111827;
+        border: 1px solid #d1d5db;
+      }
+
+      select.dark {
+        background-color: #374151;
+        color: #f9fafb;
+      }
+    </style>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+    />
+    <script src="https://unpkg.com/@tabler/icons@1.79.1/tabler-icons.min.js"></script>
+    <script>
+      function toggleMobileMenu() {
+        const mobileNav = document.getElementById("mobile-navigation");
+        mobileNav.classList.toggle("hidden");
+      }
+
+      async function convertPrices() {
+        const currency = document.getElementById("currency").value;
+        const prices = document.querySelectorAll(".price");
+        const apiKey = "f3333f799dcd48a2bd5583623c6af56e"; // Replace with your API key
+        const baseCurrency = "USD"; // Use USD as the intermediate base currency for conversion
+
+        // Define the exchange rate from IDR to USD (you might get this from another source)
+        const idrToUsdRate = 0.000065; // Example rate, you might need a more accurate or dynamic rate source
+
+        if (currency === "IDR") {
+          prices.forEach((price) => {
+            const idrValue = price.dataset.idr;
+            price.textContent = `Rp ${parseInt(idrValue).toLocaleString(
+              "id-ID"
+            )}/month`;
+          });
+          return;
+        }
+
+        try {
+          // First, convert IDR to USD (assuming IDR to USD rate is static or fetched from another source)
+          const response = await fetch(
+            `https://openexchangerates.org/api/latest.json?app_id=${apiKey}&base=${baseCurrency}`
+          );
+          const data = await response.json();
+
+          // Get the exchange rate from USD to the target currency
+          const usdToTargetRate = data.rates[currency];
+          if (!usdToTargetRate) {
+            throw new Error("Currency not supported.");
+          }
+
+          prices.forEach((price) => {
+            const idrValue = price.dataset.idr;
+            // Convert IDR to USD first
+            const usdValue = idrValue * idrToUsdRate;
+            // Then convert USD to the target currency
+            const convertedValue = (usdValue * usdToTargetRate).toFixed(2);
+            // Format the value properly for the selected currency
+            const formattedValue = new Intl.NumberFormat("en-US", {
+              style: "currency",
+              currency: currency,
+            }).format(convertedValue);
+            price.textContent = `${formattedValue}/month`;
+          });
+        } catch (error) {
+          console.error("Error fetching currency rates:", error);
+          alert("Failed to convert currency. Please try again later.");
+        }
+      }
+
+      function toggleDarkMode() {
+        const htmlElement = document.documentElement;
+        const modeIcon = document.getElementById("mode-icon");
+
+        // Cek apakah mode gelap aktif
+        const isDark = htmlElement.classList.contains("dark");
+
+        console.log("Is dark mode active?", isDark); // Debugging log
+
+        // Jika mode gelap aktif, ubah ke mode terang
+        if (isDark) {
+          htmlElement.classList.remove("dark");
+          modeIcon.classList.remove("fa-sun");
+          modeIcon.classList.add("fa-moon");
+          localStorage.setItem("theme", "light"); // Simpan status 'light' di localStorage
+          console.log("Switching to light mode");
+        } else {
+          // Jika mode terang, ubah ke mode gelap
+          htmlElement.classList.add("dark");
+          modeIcon.classList.remove("fa-moon");
+          modeIcon.classList.add("fa-sun");
+          localStorage.setItem("theme", "dark"); // Simpan status 'dark' di localStorage
+          console.log("Switching to dark mode");
+        }
+      }
+
+      // Apply saved theme on page load
+      document.addEventListener("DOMContentLoaded", () => {
+        const savedTheme = localStorage.getItem("theme");
+        const htmlElement = document.documentElement;
+        const modeIcon = document.getElementById("mode-icon");
+
+        console.log("Saved theme:", savedTheme); // Debugging log
+
+        // Cek apakah tema yang disimpan di localStorage adalah 'dark'
+        if (savedTheme === "dark") {
+          htmlElement.classList.add("dark"); // Terapkan kelas 'dark' jika tema gelap disimpan
+          modeIcon.classList.remove("fa-moon");
+          modeIcon.classList.add("fa-sun");
+        } else {
+          htmlElement.classList.remove("dark"); // Terapkan mode terang jika tidak ada status gelap
+          modeIcon.classList.remove("fa-sun");
+          modeIcon.classList.add("fa-moon");
+        }
+      });
+    </script>
+  </head>
+  <body class="bg-gray-50 dark:bg-gray-900 dark:text-white">
+    <!-- Navbar -->
+    <header class="bg-white dark:bg-gray-800 shadow sticky top-0 z-50">
+      <div class="container mx-auto flex items-center justify-between p-4">
+        <!-- Logo -->
+        <a href="#" class="flex items-center space-x-2">
+          <img
+            src="images/logo.png"
+            alt="Lyeen Store Logo"
+            class="h-8 w-auto"
+          />
+          <span class="text-xl font-bold">Lyeen Store</span>
+        </a>
+
+        <!-- Navigation -->
+        <nav class="hidden md:flex items-center space-x-4" id="main-navigation">
+          <a href="#about" class="hover:text-blue-500">About</a>
+          <a href="#features" class="hover:text-blue-500">Features</a>
+          <a href="#pricing" class="hover:text-blue-500">Pricing</a>
+          <a href="#contact" class="hover:text-blue-500">Contact</a>
+          <a href="#client-area" class="hover:text-blue-500 flex items-center">
+            <i class="fas fa-user-circle mr-2"></i> Client Area
+          </a>
+          <div class="flex items-center space-x-2">
+            <label for="currency" class="text-sm font-semibold"
+              >Currency:</label
+            >
+            <select
+              id="currency"
+              class="p-2 rounded border bg-gray-100 dark:bg-gray-700 dark:text-white"
+              onchange="convertPrices()"
+            >
+              <option value="IDR" selected>Indonesian Rupiah (IDR)</option>
+              <option value="USD">US Dollar (USD)</option>
+              <option value="EUR">Euro (EUR)</option>
+              <option value="GBP">British Pound (GBP)</option>
+              <option value="JPY">Japanese Yen (JPY)</option>
+            </select>
+          </div>
+        </nav>
+
+        <!-- Dark Mode Toggle -->
+        <button
+          onclick="toggleDarkMode()"
+          class="p-2 bg-gray-200 dark:bg-gray-700 rounded flex items-center"
+        >
+          <i id="mode-icon" class="fas fa-moon"></i>
+          <!-- Ikon default (moon) -->
+        </button>
+
+        <!-- Mobile Menu Toggle -->
+        <button
+          class="block md:hidden p-2 bg-gray-200 dark:bg-gray-700 rounded"
+          onclick="toggleMobileMenu()"
+        >
+          <i class="fas fa-bars"></i>
+        </button>
+      </div>
+
+      <!-- Mobile Navigation -->
+      <div
+        id="mobile-navigation"
+        class="md:hidden hidden bg-white dark:bg-gray-800 p-4"
+      >
+        <a href="#about" class="block hover:text-blue-500">About</a>
+        <a href="#features" class="block hover:text-blue-500">Features</a>
+        <a href="#pricing" class="block hover:text-blue-500">Pricing</a>
+        <a href="#contact" class="block hover:text-blue-500">Contact</a>
+        <a
+          href="#client-area"
+          class="block hover:text-blue-500 flex items-center"
+        >
+          <i class="fas fa-user-circle mr-2"></i> Client Area
+        </a>
+        <div class="mt-4">
+          <label for="currency-mobile" class="text-sm font-semibold"
+            >Currency:</label
+          >
+          <select
+            id="currency-mobile"
+            class="w-full p-2 rounded border bg-gray-100 dark:bg-gray-700 dark:text-white"
+            onchange="convertPrices()"
+          >
+            <option value="IDR" selected>Indonesian Rupiah (IDR)</option>
+            <option value="USD">US Dollar (USD)</option>
+            <option value="EUR">Euro (EUR)</option>
+            <option value="GBP">British Pound (GBP)</option>
+            <option value="JPY">Japanese Yen (JPY)</option>
+          </select>
+        </div>
+      </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="text-center py-20 bg-blue-500 text-white relative">
+      <h1 class="text-4xl font-bold">
+        Host Your Minecraft Server Effortlessly
+      </h1>
+      <p class="mt-4 text-lg">
+        Reliable, affordable, and budget-friendly game server hosting for
+        Minecraft enthusiasts.
+      </p>
+      <button
+        class="mt-6 px-6 py-3 bg-gray-800 text-white rounded shadow hover:bg-gray-700"
+        onclick="window.location.href='#pricing';"
+      >
+        Get Started
+      </button>
+    </section>
+
+    <!-- Features -->
+    <section id="features" class="container mx-auto py-12">
+      <h2 class="text-2xl font-bold text-center mb-6">Features</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <!-- High Performance -->
+        <div
+          class="p-6 bg-gray-100 dark:bg-gray-800 rounded shadow flex items-center"
+        >
+          <img
+            src="images/high-performance-icon.png"
+            alt="High Performance"
+            class="h-12 w-12 mr-4"
+          />
+          <div>
+            <h3 class="font-bold">High Performance</h3>
+            <p>Experience lag-free gaming with our high-performance servers.</p>
+          </div>
+        </div>
+        <!-- 24/7 Support -->
+        <div
+          class="p-6 bg-gray-100 dark:bg-gray-800 rounded shadow flex items-center"
+        >
+          <img
+            src="images/24-7-icon.png"
+            alt="24/7 Support"
+            class="h-12 w-12 mr-4"
+          />
+          <div>
+            <h3 class="font-bold">24/7 Support</h3>
+            <p>Our support team is here to assist you anytime.</p>
+          </div>
+        </div>
+        <!-- Custom Plugins -->
+        <div
+          class="p-6 bg-gray-100 dark:bg-gray-800 rounded shadow flex items-center"
+        >
+          <img
+            src="images/custom-plugin-icon.png"
+            alt="Custom Plugins"
+            class="h-12 w-12 mr-4"
+          />
+          <div>
+            <h3 class="font-bold">Custom Plugins</h3>
+            <p>Install and manage your favorite Minecraft plugins easily.</p>
+          </div>
+        </div>
+        <!-- DDoS Protection -->
+        <div
+          class="p-6 bg-gray-100 dark:bg-gray-800 rounded shadow flex items-center"
+        >
+          <img
+            src="images/ddos-protection-icon.png"
+            alt="DDoS Protection"
+            class="h-12 w-12 mr-4"
+          />
+          <div>
+            <h3 class="font-bold">DDoS Protection</h3>
+            <p>Ensure your server's safety with advanced DDoS protection.</p>
+          </div>
+        </div>
+        <!-- Easy Configuration -->
+        <div
+          class="p-6 bg-gray-100 dark:bg-gray-800 rounded shadow flex items-center"
+        >
+          <img
+            src="images/easy-configuration-icon.png"
+            alt="Easy Configuration"
+            class="h-12 w-12 mr-4"
+          />
+          <div>
+            <h3 class="font-bold">Easy Configuration</h3>
+            <p>Set up and manage your server with user-friendly tools.</p>
+          </div>
+        </div>
+        <!-- Secure Backups -->
+        <div
+          class="p-6 bg-gray-100 dark:bg-gray-800 rounded shadow flex items-center"
+        >
+          <img
+            src="images/backup-icon.png"
+            alt="Secure Backups"
+            class="h-12 w-12 mr-4"
+          />
+          <div>
+            <h3 class="font-bold">Secure Backups</h3>
+            <p>Keep your data safe with automated, secure backups.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="bg-gray-100 dark:bg-gray-800 py-12">
+      <div class="container mx-auto text-center">
+        <h2 class="text-2xl font-bold">About Us</h2>
+        <p class="mt-4">
+          We are a team of passionate professionals dedicated to providing the
+          best Minecraft server hosting experience for gamers around the world.
+          With years of expertise in server management and a deep understanding
+          of the Minecraft community, we aim to deliver reliable, secure, and
+          high-performance hosting solutions for players and server owners
+          alike.
+        </p>
+        <p class="mt-4">
+          Our hosting solutions are designed to provide seamless gameplay, with
+          minimal latency, and the ability to scale as your server grows. We
+          offer full customization options, 24/7 customer support, and
+          industry-leading DDoS protection to ensure that your Minecraft
+          experience is smooth and uninterrupted.
+        </p>
+        <p class="mt-4">
+          Whether you're running a small personal server or managing a large
+          multiplayer world, we have the tools and support you need to ensure
+          your Minecraft server runs at its best. Join the thousands of gamers
+          and server owners who trust us to provide the best hosting experience
+          in the Minecraft community.
+        </p>
+      </div>
+    </section>
+
+    <section id="pricing" class="container mx-auto py-12">
+      <h2 class="text-2xl font-bold text-center mb-6">Pricing</h2>
+
+      <!-- Deskripsi Kategori -->
+      <div class="text-center mb-6 text-white">
+        <p class="mb-4">
+          Choose from our flexible plans designed for <b>Bedrock</b>,
+          <b>Java</b>, and <b>Node.js</b> servers.
+        </p>
+
+        <!-- Use Flexbox to align dropdowns horizontally -->
+        <div class="flex justify-center items-center gap-6">
+          <div>
+            <label for="server-type" class="block text-lg font-bold">
+              Choose Server Type:
+            </label>
+            <select
+              id="server-type"
+              class="p-2 rounded border bg-gray-800 text-white"
+              onchange="filterPricing()"
+            >
+              <option value="all" selected>All Servers</option>
+              <option value="bedrock">Bedrock</option>
+              <option value="java">Java</option>
+              <option value="nodejs">Node.js</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="plan-type" class="block text-lg font-bold">
+              Choose Plan Type:
+            </label>
+            <select
+              id="plan-type"
+              class="p-2 rounded border bg-gray-800 text-white"
+              onchange="filterPricing()"
+            >
+              <option value="all" selected>All Plans</option>
+              <option value="basic">Basic</option>
+              <option value="premium">Premium</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pricing Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <!-- Bedrock PMMP Servers -->
+        <div
+          class="pricing-item bedrock basic p-6 bg-gray-100 dark:bg-gray-800 rounded shadow"
+        >
+          <div class="text-center">
+            <img
+              src="images/pmmp-icon.png"
+              alt="Bedrock PMMP Icon"
+              class="w-12 h-12 mx-auto mb-4"
+            />
+          </div>
+          <h3 class="font-bold text-center">Bedrock PMMP (Basic)</h3>
+          <p class="price text-center" data-idr="50000">Rp 50,000/month</p>
+
+          <!-- Description about PMMP -->
+          <p class="text-center text-gray-700 dark:text-gray-300 mt-2">
+            PMMP (PocketMine-MP) is server software that allows you to run
+            Minecraft Bedrock Edition on any device with high performance and
+            plugin support. With this premium version, you get extra features
+            and better support.
+          </p>
+
+          <ul class="mt-4">
+            <li>512 MB RAM</li>
+            <li>10 Players</li>
+            <li>24/7 Support</li>
+          </ul>
+          <div class="text-center mt-4">
+            <button
+              class="px-4 py-2 bg-blue-500 text-white rounded shadow hover:bg-blue-600"
+            >
+              Order Now
+            </button>
+          </div>
+        </div>
+
+        <!-- Bedrock PMMP Servers -->
+        <div
+          class="pricing-item premium basic p-6 bg-gray-100 dark:bg-gray-800 rounded shadow"
+        >
+          <div class="text-center">
+            <img
+              src="images/pmmp-icon.png"
+              alt="Bedrock PMMP Icon"
+              class="w-12 h-12 mx-auto mb-4"
+            />
+          </div>
+          <h3 class="font-bold text-center">Bedrock PMMP (Premium)</h3>
+          <p class="price text-center" data-idr="50000">Rp 50,000/month</p>
+
+          <!-- Description about PMMP -->
+          <p class="text-center text-gray-700 dark:text-gray-300 mt-2">
+            PMMP (PocketMine-MP) is server software that allows you to run
+            Minecraft Bedrock Edition on any device with high performance and
+            plugin support. With this premium version, you get extra features
+            and better support.
+          </p>
+
+          <ul class="mt-4">
+            <li>512 MB RAM</li>
+            <li>10 Players</li>
+            <li>24/7 Support</li>
+          </ul>
+          <div class="text-center mt-4">
+            <button
+              class="px-4 py-2 bg-blue-500 text-white rounded shadow hover:bg-blue-600"
+            >
+              Order Now
+            </button>
+          </div>
+        </div>
+
+        <!-- Vanilla Bedrock Servers -->
+        <div
+          class="pricing-item bedrock basic p-6 bg-gray-100 dark:bg-gray-800 rounded shadow"
+        >
+          <div class="text-center">
+            <img
+              src="images/bedrock-icon.png"
+              alt="Bedrock Icon"
+              class="w-12 h-12 mx-auto mb-4"
+            />
+          </div>
+          <h3 class="font-bold text-center">Bedrock Vanilla (Basic)</h3>
+          <p class="price text-center" data-idr="75000">Rp 75,000/month</p>
+
+          <!-- Description about Vanilla Bedrock -->
+          <p class="text-center text-gray-700 dark:text-gray-300 mt-2">
+            Vanilla Bedrock is the official server software for running
+            Minecraft Bedrock Edition. It offers a stable and authentic
+            Minecraft experience without any modifications, perfect for those
+            who want to enjoy the game as it was originally intended.
+          </p>
+
+          <ul class="mt-4">
+            <li>1 GB RAM</li>
+            <li>20 Players</li>
+            <li>24/7 Support</li>
+          </ul>
+          <div class="text-center mt-4">
+            <button
+              class="px-4 py-2 bg-blue-500 text-white rounded shadow hover:bg-blue-600"
+            >
+              Order Now
+            </button>
+          </div>
+        </div>
+
+        <div
+          class="pricing-item bedrock premium p-6 bg-gray-100 dark:bg-gray-800 rounded shadow"
+        >
+          <div class="text-center">
+            <img
+              src="images/bedrock-icon.png"
+              alt="Bedrock Icon"
+              class="w-12 h-12 mx-auto mb-4"
+            />
+          </div>
+          <h3 class="font-bold text-center">Bedrock Vanilla (Premium)</h3>
+          <p class="price text-center" data-idr="75000">Rp 75,000/month</p>
+
+          <!-- Description about Vanilla Bedrock -->
+          <p class="text-center text-gray-700 dark:text-gray-300 mt-2">
+            Vanilla Bedrock is the official server software for running
+            Minecraft Bedrock Edition. It offers a stable and authentic
+            Minecraft experience without any modifications, perfect for those
+            who want to enjoy the game as it was originally intended.
+          </p>
+
+          <ul class="mt-4">
+            <li>1 GB RAM</li>
+            <li>20 Players</li>
+            <li>24/7 Support</li>
+          </ul>
+          <div class="text-center mt-4">
+            <button
+              class="px-4 py-2 bg-blue-500 text-white rounded shadow hover:bg-blue-600"
+            >
+              Order Now
+            </button>
+          </div>
+        </div>
+
+        <!-- Java Servers -->
+        <div
+          class="pricing-item java basic p-6 bg-gray-100 dark:bg-gray-800 rounded shadow"
+        >
+          <div class="text-center">
+            <img
+              src="images/java-icon.png"
+              alt="Java Icon"
+              class="w-12 h-12 mx-auto mb-4"
+            />
+          </div>
+          <h3 class="font-bold text-center">
+            Java Spigot, Paper, Purpur (Basic)
+          </h3>
+          <p class="price text-center" data-idr="100000">Rp 100,000/month</p>
+
+          <!-- Description about Java Spigot, Paper, and Purpur -->
+          <p class="text-center text-gray-700 dark:text-gray-300 mt-2">
+            Java Spigot, Paper, and Purpur are high-performance server software
+            for Minecraft Java Edition. Spigot is optimized for plugin support,
+            Paper extends Spigot with improved performance and additional
+            features, while Purpur builds on Paper with even more customization
+            options for server owners looking to enhance performance and
+            gameplay. This basic package provides an excellent foundation for a
+            Java server with strong support and scalability.
+          </p>
+
+          <ul class="mt-4">
+            <li>2 GB RAM</li>
+            <li>30 Players</li>
+            <li>24/7 Support</li>
+          </ul>
+          <div class="text-center mt-4">
+            <button
+              class="px-4 py-2 bg-blue-500 text-white rounded shadow hover:bg-blue-600"
+            >
+              Order Now
+            </button>
+          </div>
+        </div>
+
+        <div
+          class="pricing-item java premium p-6 bg-gray-100 dark:bg-gray-800 rounded shadow"
+        >
+          <div class="text-center">
+            <img
+              src="images/java-icon.png"
+              alt="Java Icon"
+              class="w-12 h-12 mx-auto mb-4"
+            />
+          </div>
+          <h3 class="font-bold text-center">
+            Java Spigot, Paper, Purpur (Premium)
+          </h3>
+          <p class="price text-center" data-idr="200000">Rp 200,000/month</p>
+
+          <!-- Description about Java Spigot, Paper, and Purpur -->
+          <p class="text-center text-gray-700 dark:text-gray-300 mt-2">
+            Java Spigot, Paper, and Purpur are high-performance server software
+            for Minecraft Java Edition. Spigot is optimized for plugin support,
+            Paper extends Spigot with improved performance and additional
+            features, while Purpur builds on Paper with even more customization
+            options for server owners looking to enhance performance and
+            gameplay. This basic package provides an excellent foundation for a
+            Java server with strong support and scalability.
+          </p>
+
+          <ul class="mt-4">
+            <li>4 GB RAM</li>
+            <li>50 Players</li>
+            <li>24/7 Support</li>
+          </ul>
+          <div class="text-center mt-4">
+            <button
+              class="px-4 py-2 bg-blue-500 text-white rounded shadow hover:bg-blue-600"
+            >
+              Order Now
+            </button>
+          </div>
+        </div>
+
+        <!-- Node.js Servers -->
+        <div
+          class="pricing-item nodejs basic p-6 bg-gray-100 dark:bg-gray-800 rounded shadow"
+        >
+          <div class="text-center">
+            <img
+              src="images/node-js-icon.png"
+              alt="Node.js Icon"
+              class="w-12 h-12 mx-auto mb-4"
+            />
+          </div>
+          <h3 class="font-bold text-center">Node.js Bot Starter (Basic)</h3>
+          <p class="price text-center" data-idr="75000">Rp 75,000/month</p>
+
+          <!-- Description about Node.js (Express.js) -->
+          <p class="text-center text-gray-700 dark:text-gray-300 mt-2">
+            Node.js is a JavaScript runtime built on Chrome's V8 JavaScript
+            engine, ideal for building scalable network applications.
+            Express.js, a minimal and flexible Node.js web application
+            framework, provides a robust set of features to build single-page,
+            multi-page, and hybrid web applications with ease.
+          </p>
+
+          <ul class="mt-4">
+            <li>1 GB RAM</li>
+            <li>Single Bot Instance</li>
+            <li>24/7 Support</li>
+          </ul>
+          <div class="text-center mt-4">
+            <button
+              class="px-4 py-2 bg-blue-500 text-white rounded shadow hover:bg-blue-600"
+            >
+              Order Now
+            </button>
+          </div>
+        </div>
+
+        <div
+          class="pricing-item nodejs premium p-6 bg-gray-100 dark:bg-gray-800 rounded shadow"
+        >
+          <div class="text-center">
+            <img
+              src="images/node-js-icon.png"
+              alt="Node.js Icon"
+              class="w-12 h-12 mx-auto mb-4"
+            />
+          </div>
+          <h3 class="font-bold text-center">Node.js Bot Pro (Premium)</h3>
+          <p class="price text-center" data-idr="150000">Rp 150,000/month</p>
+
+          <!-- Description about Node.js (Express.js) -->
+          <p class="text-center text-gray-700 dark:text-gray-300 mt-2">
+            Node.js is a JavaScript runtime built on Chrome's V8 JavaScript
+            engine, ideal for building scalable network applications.
+            Express.js, a minimal and flexible Node.js web application
+            framework, provides a robust set of features to build single-page,
+            multi-page, and hybrid web applications with ease.
+          </p>
+
+          <ul class="mt-4">
+            <li>2 GB RAM</li>
+            <li>Multiple Bot Instances</li>
+            <li>24/7 Support</li>
+          </ul>
+          <div class="text-center mt-4">
+            <button
+              class="px-4 py-2 bg-blue-500 text-white rounded shadow hover:bg-blue-600"
+            >
+              Order Now
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="bg-gray-100 dark:bg-gray-800 py-12">
+      <div class="container mx-auto text-center">
+        <h2 class="text-2xl font-bold">Contact Us</h2>
+        <p class="mt-4">
+          Have questions? Reach out to us via WhatsApp for support and
+          testimonials.
+        </p>
+        <a
+          href="https://wa.me/6282225196199"
+          target="_blank"
+          class="mt-6 inline-block px-6 py-3 bg-blue-500 text-white rounded shadow hover:bg-blue-600"
+          >Contact via WhatsApp</a
+        >
+        <a
+          href="https://whatsapp.com/channel/0029VaimCgSEawdm28WTqY3k"
+          target="_blank"
+          class="mt-6 inline-block px-6 py-3 bg-blue-500 text-white rounded shadow hover:bg-blue-600"
+          >Testimoni Channel</a
+        >
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-6">
+      <div class="container mx-auto grid md:grid-cols-3 gap-8">
+        <!-- Section 1: Copyright and Visitors -->
+        <div>
+          <p>
+            © <span id="current-year">2024</span> Minecraft Hosting. All Rights
+            Reserved.
+          </p>
+          <div id="visitor-counter" class="mt-2">Visitors: <span>0</span></div>
+        </div>
+        <!-- Section 2: Quick Links -->
+        <div>
+          <h4 class="font-bold mb-2">Quick Links</h4>
+          <ul class="space-y-2">
+            <li><a href="#" class="hover:underline">Home</a></li>
+            <li><a href="#about" class="hover:underline">About</a></li>
+            <li><a href="#contact" class="hover:underline">Contact Us</a></li>
+            <li><a href="#features" class="hover:underline">Features</a></li>
+            <li><a href="#pricing" class="hover:underline">Pricing</a></li>
+          </ul>
+        </div>
+        <!-- Section 3: Payment Methods -->
+        <div>
+          <h4 class="font-bold mb-2">Payment Methods</h4>
+          <div class="flex space-x-4 mt-2">
+            <img src="images/dana-logo.png" alt="Dana" class="h-8 w-auto" />
+            <img src="images/gopay-logo.png" alt="Gopay" class="h-8 w-auto" />
+            <img src="images/qris-logo.png" alt="QRIS" class="h-8 w-auto" />
+          </div>
+        </div>
+      </div>
+      <!-- Footer Bottom -->
+      <div
+        class="mt-6 border-t border-gray-700 pt-4 flex justify-between items-center"
+      >
+        <!-- Social Media -->
+        <div class="flex space-x-4">
+          <a href="#" aria-label="Facebook">
+            <i class="fab fa-facebook-f h-6 w-6"></i>
+            <!-- Facebook Icon -->
+          </a>
+          <a href="#" aria-label="Twitter">
+            <i class="fab fa-twitter h-6 w-6"></i>
+            <!-- Twitter Icon -->
+          </a>
+          <a href="#" aria-label="Instagram">
+            <i class="fab fa-instagram h-6 w-6"></i>
+            <!-- Instagram Icon -->
+          </a>
+        </div>
+
+        <!-- Centered Text Link -->
+        <div class="text-center flex-1">
+          <p>
+            This website was made by
+            <a
+              href="https://wa.me/6282331422421?text=Hello!%20I%20saw%20your%20website.%20Can%20we%20connect?"
+              class="text-blue-500 hover:underline"
+              target="_blank"
+            >
+              Ahmad Haikal Rizal
+            </a>
+          </p>
+        </div>
+
+        <!-- Back to Top -->
+        <button
+          id="back-to-top"
+          class="bg-gray-600 hover:bg-gray-500 text-white py-2 px-4 rounded flex items-center"
+          onclick="window.scrollTo({top: 0, behavior: 'smooth'})"
+        >
+          <i class="fas fa-arrow-up mr-2"></i> Back to Top
+        </button>
+      </div>
+    </footer>
+
+    <script>
+      // Update year dynamically
+      document.getElementById("current-year").textContent =
+        new Date().getFullYear();
+    </script>
+  </body>
+  <script>
+    function filterPricing() {
+      const selectedServerType = document.getElementById("server-type").value;
+      const selectedPlanType = document.getElementById("plan-type").value;
+      const pricingItems = document.querySelectorAll(".pricing-item");
+
+      pricingItems.forEach((item) => {
+        const serverMatch =
+          selectedServerType === "all" ||
+          item.classList.contains(selectedServerType);
+        const planMatch =
+          selectedPlanType === "all" ||
+          item.classList.contains(selectedPlanType);
+
+        if (serverMatch && planMatch) {
+          item.style.display = "block";
+        } else {
+          item.style.display = "none";
+        }
+      });
+    }
+
+    // Fetch user's IP using ipinfo.io API
+    function getUserIP() {
+      return fetch("https://ipinfo.io/json/")
+        .then((response) => response.json())
+        .then((data) => data.ip); // Returns the user's IP address
+    }
+
+    // Function to update the visitor count
+    function updateVisitorCount() {
+      getUserIP()
+        .then((ip) => {
+          const currentTimestamp = Math.floor(Date.now() / 3600000); // Get the current hour
+
+          // Check if the IP and timestamp are stored in localStorage
+          const storedIP = localStorage.getItem("visitorIP");
+          const lastVisitTimestamp = localStorage.getItem("lastVisitTimestamp");
+          let visitorCount =
+            parseInt(localStorage.getItem("visitorCount")) || 0;
+
+          // If the IP is new or the hour has changed, increment the count
+          if (
+            storedIP !== ip ||
+            currentTimestamp !== parseInt(lastVisitTimestamp)
+          ) {
+            localStorage.setItem("visitorIP", ip); // Store the IP
+            localStorage.setItem("lastVisitTimestamp", currentTimestamp); // Store the current hour
+            visitorCount++; // Increment the visitor count
+            localStorage.setItem("visitorCount", visitorCount); // Store the new count
+          }
+
+          // Update the displayed visitor count
+          document.querySelector("#visitor-counter span").textContent =
+            visitorCount;
+        })
+        .catch((error) => {
+          console.error("Error fetching IP address:", error);
+        });
+    }
+
+    // Run the updateVisitorCount function when the page loads
+    window.onload = updateVisitorCount;
+  </script>
+</html>
