@@ -1,4 +1,4 @@
-# Minecraft Server Hosting
+# Landing Page Minecraft Server Hosting
 
 This project provides a responsive hero section for Minecraft server hosting. The layout adjusts based on screen sizes, featuring a vertical Minecraft logo and a call-to-action button.
 
