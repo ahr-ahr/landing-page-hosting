@@ -5,7 +5,6 @@ This project provides a responsive hero section for Minecraft server hosting. Th
 ## Features
 
 - Responsive design with Flexbox
-- Vertical Minecraft logo
 - Clean and modern UI
 
 ## How to Use
