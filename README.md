@@ -1,6 +1,3 @@
-Here’s the updated `README.md` with the correct features mentioned:
-
-```markdown
 # Landing Page Minecraft Server Hosting
 
 This project provides a responsive hero section for Minecraft server hosting. The layout adjusts based on screen sizes, featuring a vertical Minecraft logo and a call-to-action button.
