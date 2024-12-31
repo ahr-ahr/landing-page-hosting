@@ -3,11 +3,22 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>LyeenStore | Game Server Hosting</title>
-    <!--<link
+    <meta
+      name="description"
+      content="LyeenStore menyediakan solusi hosting server game terbaik dengan performa tinggi, uptime stabil, dan harga bersaing. Cocok untuk gamer dan komunitas gaming."
+    />
+    <meta
+      name="keywords"
+      content="hosting server game, hosting game, game server murah, hosting terbaik untuk game, server game Indonesia, server game terbaik, LyeenStore"
+    />
+    <meta name="author" content="Ahmad Haikal Rizal" />
+    <link rel="icon" href="images/favicon.ico" type="image/x-icon" />
+
+    <title>LyeenStore | Hosting Game Server</title>
+    <link
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
       rel="stylesheet"
-    />-->
+    />
     <link href="public/output.css" rel="stylesheet" />
     <style>
       html {
@@ -71,12 +82,66 @@
         }
       }
 
+      .typing-text {
+        font-size: 1rem; /* Ukuran teks default */
+        line-height: 1.5; /* Spasi antar baris */
+        color: white;
+        white-space: normal; /* Allow line breaks for smaller screens */
+        overflow: hidden;
+        border-right: 2px solid white; /* Typing cursor effect */
+        width: nowrap; /* Initial width for typing effect */
+        animation: typing 12s steps(50, end), blink 0.75s step-end infinite;
+      }
+
+      /* Responsiveness */
+      @media (min-width: 640px) {
+        .typing-text {
+          font-size: 1.25rem; /* Lebih besar untuk layar sedang */
+        }
+      }
+
+      @media (min-width: 1024px) {
+        .typing-text {
+          font-size: 1.5rem; /* Lebih besar untuk layar besar */
+        }
+      }
+
+      @keyframes typing {
+        from {
+          width: 0;
+        }
+        to {
+          width: 100%; /* Mengetik hingga panjang penuh */
+        }
+      }
+
+      @keyframes blink {
+        from,
+        to {
+          border-color: transparent;
+        }
+        50% {
+          border-color: white;
+        }
+      }
+
+      /* Hide cursor once typing is done */
+      .typing-text.typing-complete {
+        border-right: none; /* Remove the cursor */
+      }
+
       /* Responsive design: Adjust spinner size for smaller screens */
       @media (max-width: 768px) {
         .spinner {
           width: 30px; /* Smaller size */
           height: 30px;
           border-width: 4px; /* Thinner border */
+        }
+
+        #back-to-top {
+          bottom: 1rem;
+          right: 1rem;
+          font-size: 0.875rem;
         }
       }
 
@@ -162,6 +227,14 @@
       }
       .pricing-item:hover {
         box-shadow: 0 0 15px 3px rgba(52, 152, 219, 0.6);
+      }
+
+      #back-to-top {
+        opacity: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
       }
     </style>
 
@@ -273,7 +346,7 @@
       }
     </script>
   </head>
-  <body class="bg-gray-50 dark:bg-gray-900 dark:text-white">
+  <body class="bg-gray-900 text-white">
     <!-- Toast notification container -->
     <div
       id="toast"
@@ -288,7 +361,7 @@
     </div>
 
     <!-- Navbar -->
-    <header class="bg-white dark:bg-gray-800 shadow sticky top-0 z-50">
+    <header class="bg-gray-800 shadow sticky top-0 z-50">
       <div class="container mx-auto flex items-center justify-between p-4">
         <!-- Logo -->
         <a href="#" class="flex items-center space-x-2">
@@ -297,49 +370,34 @@
             alt="Lyeen Store Logo"
             class="h-8 w-auto rounded-full"
           />
-          <span class="text-xl font-bold text-gray-900 dark:text-white"
-            >LyeenStore</span
-          >
+          <span class="text-xl font-bold 900 text-white">LyeenStore</span>
         </a>
 
         <!-- Navigation -->
         <nav class="hidden md:flex items-center space-x-4" id="main-navigation">
-          <a
-            href="#about"
-            class="text-gray-900 dark:text-white hover:text-blue-500"
-            >About</a
-          >
-          <a
-            href="#features"
-            class="text-gray-900 dark:text-white hover:text-blue-500"
+          <a href="#about" class="text-white hover:text-blue-500">About</a>
+          <a href="#features" class="text-white hover:text-blue-500"
             >Features</a
           >
-          <a
-            href="#pricing"
-            class="text-gray-900 dark:text-white hover:text-blue-500"
+          <a href="#pricing" class="900 text-white hover:text-blue-500"
             >Plans</a
           >
-          <a
-            href="#contact"
-            class="text-gray-900 dark:text-white hover:text-blue-500"
+          <a href="#contact" class="900 text-white hover:text-blue-500"
             >Contact</a
           >
           <a
-            href="#client-area"
-            class="text-gray-900 dark:text-white hover:text-blue-500 flex items-center"
+            href="https://premium.lyeenstore.xyz/auth/login"
+            class="text-white hover:text-blue-500 flex items-center"
           >
             <i class="fas fa-user-circle mr-2"></i> Client Area
           </a>
           <div class="flex items-center space-x-2">
-            <label
-              for="currency"
-              class="text-sm font-semibold text-gray-900 dark:text-white"
-            >
+            <label for="currency" class="text-sm font-semibold text-white">
               Currency:
             </label>
             <select
               id="currency"
-              class="p-2 rounded border bg-gray-100 dark:bg-gray-700 dark:text-white"
+              class="p-2 rounded border bg-gray-700 text-white"
               onchange="convertPrices()"
             >
               <option value="IDR" selected>Indonesian Rupiah (IDR)</option>
@@ -353,66 +411,47 @@
         </nav>
 
         <!-- Dark Mode Toggle -->
-        <button
+        <!-- <button
           id="dark-mode-toggle"
           class="p-2 bg-gray-200 dark:bg-gray-700 rounded flex items-center"
         >
           <i id="mode-icon" class="fas fa-moon"></i>
-        </button>
+        </button> -->
 
         <!-- Mobile Menu Toggle -->
         <button
-          class="block md:hidden p-2 bg-gray-200 dark:bg-gray-700 rounded"
+          class="block md:hidden p-2 bg-gray-700 rounded"
           onclick="toggleMobileMenu()"
         >
-          <i
-            id="mobile-icon"
-            class="fas fa-bars text-gray-900 dark:text-white"
-          ></i>
+          <i id="mobile-icon" class="fas fa-bars text-white"></i>
         </button>
       </div>
 
       <!-- Mobile Navigation -->
-      <div
-        id="mobile-navigation"
-        class="md:hidden hidden bg-white dark:bg-gray-800 p-4"
-      >
-        <a
-          href="#about"
-          class="block text-gray-900 dark:text-white hover:text-blue-500"
-          >About</a
-        >
-        <a
-          href="#features"
-          class="block text-gray-900 dark:text-white hover:text-blue-500"
+      <div id="mobile-navigation" class="md:hidden hidden bg-gray-800 p-4">
+        <a href="#about" class="block text-white hover:text-blue-500">About</a>
+        <a href="#features" class="block text-white hover:text-blue-500"
           >Features</a
         >
-        <a
-          href="#pricing"
-          class="block text-gray-900 dark:text-white hover:text-blue-500"
+        <a href="#pricing" class="block text-white hover:text-blue-500"
           >Plans</a
         >
-        <a
-          href="#contact"
-          class="block text-gray-900 dark:text-white hover:text-blue-500"
+        <a href="#contact" class="block text-white hover:text-blue-500"
           >Contact</a
         >
         <a
           href="#client-area"
-          class="block text-gray-900 dark:text-white hover:text-blue-500 flex items-center"
+          class="block text-white hover:text-blue-500 flex items-center"
         >
           <i class="fas fa-user-circle mr-2"></i> Client Area
         </a>
         <div class="mt-4">
-          <label
-            for="currency-mobile"
-            class="text-sm font-semibold text-gray-900 dark:text-white"
-          >
+          <label for="currency-mobile" class="text-sm font-semibold text-white">
             Currency:
           </label>
           <select
             id="currency-mobile"
-            class="w-full p-2 rounded border bg-gray-100 dark:bg-gray-700 dark:text-white"
+            class="w-full p-2 rounded border bg-gray-700 text-white"
             onchange="convertPrices()"
           >
             <option value="IDR" selected>Indonesian Rupiah (IDR)</option>
@@ -444,15 +483,11 @@
 
     <!-- Features -->
     <section id="features" class="container mx-auto py-12">
-      <h2
-        class="text-2xl font-bold text-center mb-6 text-gray-900 dark:text-white"
-      >
-        Features
-      </h2>
+      <h2 class="text-2xl font-bold text-center mb-6 text-white">Features</h2>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
         <!-- High Performance -->
         <div
-          class="p-6 bg-gray-100 dark:bg-gray-800 rounded shadow flex items-center transform transition duration-300 hover:scale-110 hover:shadow-lg"
+          class="p-6 bg-gray-800 rounded shadow flex items-center transform transition duration-300 hover:scale-110 hover:shadow-lg"
         >
           <img
             src="images/high-performance-icon.png"
@@ -466,7 +501,7 @@
         </div>
         <!-- 24/7 Support -->
         <div
-          class="p-6 bg-gray-100 dark:bg-gray-800 rounded shadow flex items-center transform transition duration-300 hover:scale-110 hover:shadow-lg"
+          class="p-6 bg-gray-800 rounded shadow flex items-center transform transition duration-300 hover:scale-110 hover:shadow-lg"
         >
           <img
             src="images/24-7-icon.png"
@@ -480,7 +515,7 @@
         </div>
         <!-- Custom Plugins -->
         <div
-          class="p-6 bg-gray-100 dark:bg-gray-800 rounded shadow flex items-center transform transition duration-300 hover:scale-110 hover:shadow-lg"
+          class="p-6 bg-gray-800 rounded shadow flex items-center transform transition duration-300 hover:scale-110 hover:shadow-lg"
         >
           <img
             src="images/custom-plugin-icon.png"
@@ -494,7 +529,7 @@
         </div>
         <!-- DDoS Protection -->
         <div
-          class="p-6 bg-gray-100 dark:bg-gray-800 rounded shadow flex items-center transform transition duration-300 hover:scale-110 hover:shadow-lg"
+          class="p-6 bg-gray-800 rounded shadow flex items-center transform transition duration-300 hover:scale-110 hover:shadow-lg"
         >
           <img
             src="images/ddos-protection-icon.png"
@@ -508,7 +543,7 @@
         </div>
         <!-- Easy Configuration -->
         <div
-          class="p-6 bg-gray-100 dark:bg-gray-800 rounded shadow flex items-center transform transition duration-300 hover:scale-110 hover:shadow-lg"
+          class="p-6 bg-gray-800 rounded shadow flex items-center transform transition duration-300 hover:scale-110 hover:shadow-lg"
         >
           <img
             src="images/easy-configuration-icon.png"
@@ -522,7 +557,7 @@
         </div>
         <!-- Secure Backups -->
         <div
-          class="p-6 bg-gray-100 dark:bg-gray-800 rounded shadow flex items-center transform transition duration-300 hover:scale-110 hover:shadow-lg"
+          class="p-6 bg-gray-800 rounded shadow flex items-center transform transition duration-300 hover:scale-110 hover:shadow-lg"
         >
           <img
             src="images/backup-icon.png"
@@ -538,7 +573,16 @@
     </section>
 
     <!-- About Section -->
-    <section id="about" class="bg-gray-100 dark:bg-gray-800 py-12">
+    <section id="about" class="bg-gray-800 py-12">
+      <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h2 class="text-2xl font-bold">About Us</h2>
+        <div class="mt-4">
+          <p class="typing-text"></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- <section id="about" class="bg-gray-800 py-12">
       <div class="container mx-auto text-center">
         <h2 class="text-2xl font-bold">About Us</h2>
         <p class="mt-4">
@@ -564,18 +608,14 @@
           in the Minecraft community.
         </p>
       </div>
-    </section>
+    </section> -->
 
     <section id="pricing" class="container mx-auto py-12">
-      <h2
-        class="text-2xl font-bold text-center mb-6 text-gray-900 dark:text-white"
-      >
-        Plans
-      </h2>
+      <h2 class="text-2xl font-bold text-center mb-6 text-white">Plans</h2>
 
       <!-- Deskripsi Kategori -->
       <div class="text-center mb-6 text-white">
-        <p class="mb-4 text-gray-900 dark:text-white">
+        <p class="mb-4 text-white">
           Choose from our flexible plans designed for <b>Bedrock</b>,
           <b>Java</b>, and <b>Node.js</b> servers.
         </p>
@@ -624,9 +664,7 @@
       <!-- Pricing Grid -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
         <!-- Bedrock PMMP Servers Basic -->
-        <div
-          class="pricing-item bedrock basic p-6 bg-gray-100 dark:bg-gray-800 rounded shadow"
-        >
+        <div class="pricing-item bedrock basic p-6 bg-gray-800 rounded shadow">
           <div class="text-center">
             <img
               src="images/pmmp-icon.png"
@@ -638,7 +676,7 @@
           <p class="price text-center" data-idr="5000">Rp 5.000/GB</p>
 
           <!-- Description about PMMP -->
-          <p class="text-center text-gray-700 dark:text-gray-300 mt-2">
+          <p class="text-center text-gray-300 mt-2">
             PMMP (PocketMine-MP) is server software that allows you to run
             Minecraft Bedrock Edition on any device with high performance and
             plugin support. With this premium version, you get extra features
@@ -646,7 +684,7 @@
           </p>
 
           <!-- Additional Information -->
-          <div class="mt-4 text-gray-700 dark:text-gray-300">
+          <div class="mt-4 text-gray-300">
             <div class="flex items-center justify-center mb-4">
               <img
                 src="images/indonesia-flag.png"
@@ -696,7 +734,7 @@
 
         <!-- Bedrock PMMP Servers Premium -->
         <div
-          class="pricing-item bedrock premium p-6 bg-gray-100 dark:bg-gray-800 rounded shadow"
+          class="pricing-item bedrock premium p-6 bg-gray-800 rounded shadow"
         >
           <div class="text-center">
             <img
@@ -709,7 +747,7 @@
           <p class="price text-center text-red-500" data-idr="0">Coming Soon</p>
 
           <!-- Description about PMMP -->
-          <p class="text-center text-gray-700 dark:text-gray-300 mt-2">
+          <p class="text-center text-gray-300 mt-2">
             PMMP (PocketMine-MP) is server software that allows you to run
             Minecraft Bedrock Edition on any device with high performance and
             plugin support. With this premium version, you get extra features
@@ -717,7 +755,7 @@
           </p>
 
           <!-- Additional Information -->
-          <div class="mt-4 text-gray-700 dark:text-gray-300">
+          <div class="mt-4 text-gray-300">
             <div class="flex items-center justify-center mb-4">
               <img
                 src="images/indonesia-flag.png"
@@ -779,9 +817,7 @@
         </div>
 
         <!-- Vanilla Bedrock Servers -->
-        <div
-          class="pricing-item bedrock basic p-6 bg-gray-100 dark:bg-gray-800 rounded shadow"
-        >
+        <div class="pricing-item bedrock basic p-6 bg-gray-800 rounded shadow">
           <div class="text-center">
             <img
               src="images/bedrock-icon.png"
@@ -793,7 +829,7 @@
           <p class="price text-center" data-idr="5000">Rp 5.000/GB</p>
 
           <!-- Description about Vanilla Bedrock -->
-          <p class="text-center text-gray-700 dark:text-gray-300 mt-2">
+          <p class="text-center text-gray-300 mt-2">
             Vanilla Bedrock is the official server software for running
             Minecraft Bedrock Edition. It offers a stable and authentic
             Minecraft experience without any modifications, perfect for those
@@ -801,7 +837,7 @@
           </p>
 
           <!-- Additional Information -->
-          <div class="mt-4 text-gray-700 dark:text-gray-300">
+          <div class="mt-4 text-gray-300">
             <div class="flex items-center justify-center mb-4">
               <img
                 src="images/indonesia-flag.png"
@@ -851,7 +887,7 @@
 
         <!-- Bedrock Vanilla (Premium) -->
         <div
-          class="pricing-item bedrock premium p-6 bg-gray-100 dark:bg-gray-800 rounded shadow"
+          class="pricing-item bedrock premium p-6 bg-gray-800 rounded shadow"
         >
           <div class="text-center">
             <img
@@ -862,7 +898,7 @@
           </div>
           <h3 class="font-bold text-center">Bedrock Vanilla (Premium)</h3>
           <p class="price text-center text-red-500" data-idr="0">Coming Soon</p>
-          <p class="text-center text-gray-700 dark:text-gray-300 mt-2">
+          <p class="text-center text-gray-300 mt-2">
             Vanilla Bedrock is the official server software for running
             Minecraft Bedrock Edition. It offers a stable and authentic
             Minecraft experience without any modifications, perfect for those
@@ -870,7 +906,7 @@
           </p>
 
           <!-- Additional Information -->
-          <div class="mt-4 text-gray-700 dark:text-gray-300">
+          <div class="mt-4 text-gray-300">
             <div class="flex items-center justify-center mb-4">
               <img
                 src="images/indonesia-flag.png"
@@ -930,9 +966,7 @@
         </div>
 
         <!-- Java Servers -->
-        <div
-          class="pricing-item java basic p-6 bg-gray-100 dark:bg-gray-800 rounded shadow"
-        >
+        <div class="pricing-item java basic p-6 bg-gray-800 rounded shadow">
           <div class="text-center">
             <img
               src="images/java-icon.png"
@@ -946,7 +980,7 @@
           <p class="price text-center" data-idr="10000">Rp 10.000/GB</p>
 
           <!-- Description about Java Spigot, Paper, and Purpur -->
-          <p class="text-center text-gray-700 dark:text-gray-300 mt-2">
+          <p class="text-center text-gray-300 mt-2">
             Java Spigot, Paper, and Purpur are high-performance server software
             for Minecraft Java Edition. Spigot is optimized for plugin support,
             Paper extends Spigot with improved performance and additional
@@ -955,7 +989,7 @@
           </p>
 
           <!-- Additional Information -->
-          <div class="mt-4 text-gray-700 dark:text-gray-300">
+          <div class="mt-4 text-gray-300">
             <div class="flex items-center justify-center mb-4">
               <img
                 src="images/indonesia-flag.png"
@@ -1003,9 +1037,7 @@
           </div>
         </div>
 
-        <div
-          class="pricing-item java premium p-6 bg-gray-100 dark:bg-gray-800 rounded shadow"
-        >
+        <div class="pricing-item java premium p-6 bg-gray-800 rounded shadow">
           <div class="text-center">
             <img
               src="images/java-icon.png"
@@ -1019,7 +1051,7 @@
           <p class="price text-center text-red-500" data-idr="0">Coming Soon</p>
 
           <!-- Description about Java Spigot, Paper, and Purpur -->
-          <p class="text-center text-gray-700 dark:text-gray-300 mt-2">
+          <p class="text-center text-gray-300 mt-2">
             Java Spigot, Paper, and Purpur are high-performance server software
             for Minecraft Java Edition. Spigot is optimized for plugin support,
             Paper extends Spigot with improved performance and additional
@@ -1028,7 +1060,7 @@
           </p>
 
           <!-- Additional Information -->
-          <div class="mt-4 text-gray-700 dark:text-gray-300">
+          <div class="mt-4 text-gray-300">
             <div class="flex items-center justify-center mb-4">
               <img
                 src="images/indonesia-flag.png"
@@ -1088,9 +1120,7 @@
         </div>
 
         <!-- Node.js Bot Starter (Basic) -->
-        <div
-          class="pricing-item nodejs basic p-6 bg-gray-100 dark:bg-gray-800 rounded shadow"
-        >
+        <div class="pricing-item nodejs basic p-6 bg-gray-800 rounded shadow">
           <div class="text-center">
             <img
               src="images/node-js-icon.png"
@@ -1100,7 +1130,7 @@
           </div>
           <h3 class="font-bold text-center">Node.js Run Bot (Basic)</h3>
           <p class="price text-center" data-idr="1000">Rp 1.000/GB</p>
-          <p class="text-center text-gray-700 dark:text-gray-300 mt-2">
+          <p class="text-center text-gray-300 mt-2">
             Node.js is a JavaScript runtime built on Chrome's V8 JavaScript
             engine, ideal for building scalable network applications.
             Express.js, a minimal and flexible Node.js web application
@@ -1109,7 +1139,7 @@
           </p>
 
           <!-- Additional Information -->
-          <div class="mt-4 text-gray-700 dark:text-gray-300">
+          <div class="mt-4 text-gray-300">
             <div class="flex items-center justify-center mb-4">
               <img
                 src="images/indonesia-flag.png"
@@ -1156,9 +1186,7 @@
         </div>
 
         <!-- Node.js Bot Pro (Premium) -->
-        <div
-          class="pricing-item nodejs premium p-6 bg-gray-100 dark:bg-gray-800 rounded shadow"
-        >
+        <div class="pricing-item nodejs premium p-6 bg-gray-800 rounded shadow">
           <div class="text-center">
             <img
               src="images/node-js-icon.png"
@@ -1168,7 +1196,7 @@
           </div>
           <h3 class="font-bold text-center">Node.js Run Bot (Unlimited)</h3>
           <p class="price text-center" data-idr="10000">Rp 10.000</p>
-          <p class="text-center text-gray-700 dark:text-gray-300 mt-2">
+          <p class="text-center text-gray-300 mt-2">
             Node.js is a JavaScript runtime built on Chrome's V8 JavaScript
             engine, ideal for building scalable network applications.
             Express.js, a minimal and flexible Node.js web application
@@ -1177,7 +1205,7 @@
           </p>
 
           <!-- Additional Information -->
-          <div class="mt-4 text-gray-700 dark:text-gray-300">
+          <div class="mt-4 text-gray-300">
             <div class="flex items-center justify-center mb-4">
               <img
                 src="images/indonesia-flag.png"
@@ -1226,43 +1254,51 @@
     </section>
 
     <!-- Contact Section -->
-    <section id="contact" class="bg-gray-100 dark:bg-gray-800 py-12">
+    <!-- Contact Section -->
+    <section id="contact" class="bg-gray-800 py-12">
       <div class="container mx-auto text-center">
-        <h2 class="text-2xl font-bold">Contact Us</h2>
-        <p class="mt-4">
-          Have questions? Reach out to us via WhatsApp for support, group and
+        <h2 class="text-3xl font-bold text-white">Contact Us</h2>
+        <p class="mt-4 text-lg text-gray-400">
+          Have questions? Reach out to us via WhatsApp for support, group, and
           testimonials.
         </p>
-        <a
-          href="https://wa.me/6282225196199"
-          target="_blank"
-          class="mt-6 inline-block px-6 py-3 bg-blue-500 text-white rounded shadow hover:bg-blue-600"
-          >Contact via WhatsApp</a
-        >
-        <a
-          href="https://whatsapp.com/channel/0029VaimCgSEawdm28WTqY3k"
-          target="_blank"
-          class="mt-6 inline-block px-6 py-3 bg-blue-500 text-white rounded shadow hover:bg-blue-600"
-          >Lyeen Testimoni Channel</a
-        >
-        <a
-          href="https://chat.whatsapp.com/EKItWj2EsKJ93rRFoeBbcc"
-          target="_blank"
-          class="mt-6 inline-block px-6 py-3 bg-blue-500 text-white rounded shadow hover:bg-blue-600"
-          >Lyeen Group WhatsApp</a
-        >
+
+        <!-- Contact Links -->
+        <div class="mt-8 space-y-4">
+          <a
+            href="https://wa.me/6282225196199"
+            target="_blank"
+            class="flex items-center justify-center px-8 py-4 bg-blue-500 text-white rounded-xl shadow-lg hover:bg-blue-600 transform transition-all duration-300 ease-in-out hover:scale-105"
+          >
+            <i class="fab fa-whatsapp mr-3"></i> Contact via WhatsApp
+          </a>
+          <a
+            href="https://whatsapp.com/channel/0029VaimCgSEawdm28WTqY3k"
+            target="_blank"
+            class="flex items-center justify-center px-8 py-4 bg-green-500 text-white rounded-xl shadow-lg hover:bg-green-600 transform transition-all duration-300 ease-in-out hover:scale-105"
+          >
+            <i class="fab fa-whatsapp mr-3"></i> Lyeen Testimoni Channel
+          </a>
+          <a
+            href="https://chat.whatsapp.com/EKItWj2EsKJ93rRFoeBbcc"
+            target="_blank"
+            class="flex items-center justify-center px-8 py-4 bg-teal-500 text-white rounded-xl shadow-lg hover:bg-teal-600 transform transition-all duration-300 ease-in-out hover:scale-105"
+          >
+            <i class="fab fa-whatsapp mr-3"></i> Lyeen Group WhatsApp
+          </a>
+        </div>
       </div>
     </section>
 
     <!-- Footer -->
-    <footer class="bg-gray-100 dark:bg-gray-800 text-white py-6">
+    <footer class="bg-gray-800 text-white py-6">
       <div
         class="container mx-auto grid grid-cols-1 gap-8 md:grid-cols-3 text-center md:text-left"
       >
         <!-- Section 1: Copyright and Visitors -->
         <div>
           <p>
-            © <span id="current-year">2024</span> Minecraft Hosting. All Rights
+            © <span id="current-year">2024</span> LyeenStore. All Rights
             Reserved.
           </p>
           <div id="visitor-counter" class="mt-2">Visitors: <span>0</span></div>
@@ -1302,7 +1338,7 @@
               class="h-8 w-auto transform transition duration-300 hover:scale-110 hover:shadow-lg"
             />
             <img
-              src="images/spay.jpeg"
+              src="images/spay.png"
               alt="Shopeepay"
               class="h-8 w-auto transform transition duration-300 hover:scale-110 hover:shadow-lg"
             />
@@ -1312,7 +1348,7 @@
               class="h-8 w-auto transform transition duration-300 hover:scale-110 hover:shadow-lg"
             />
             <img
-              src="images/bitcoin-logo.jpeg"
+              src="images/bitcoin-logo.png"
               alt="Bitcoin"
               class="h-8 w-auto transform transition duration-300 hover:scale-110 hover:shadow-lg"
             />
@@ -1341,7 +1377,7 @@
         </div>
 
         <!-- Centered Text Link -->
-        <div class="text-center md:text-left">
+        <div class="text-center md:text-center w-full">
           <p>
             This website was made by
             <a
@@ -1357,8 +1393,8 @@
         <!-- Back to Top -->
         <button
           id="back-to-top"
-          class="bg-gray-600 hover:bg-gray-500 text-white py-2 px-4 rounded flex items-center"
-          onclick="window.scrollTo({top: 0, behavior: 'smooth'})"
+          class="hidden fixed bottom-4 right-4 bg-gray-600 hover:bg-gray-500 text-white py-2 px-4 rounded flex items-center shadow-md transition-opacity duration-300"
+          onclick="window.scrollTo({ top: 0, behavior: 'smooth' })"
         >
           <i class="fas fa-arrow-up mr-2"></i> Back to Top
         </button>
@@ -1421,6 +1457,56 @@
     </script>
   </body>
   <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const typingText = document.querySelector(".typing-text");
+      const textContent = `
+    We are a team of passionate professionals dedicated to providing the best 
+    Minecraft server hosting experience for gamers around the world. 
+    With years of expertise in server management and a deep understanding of 
+    the Minecraft community, we aim to deliver reliable, secure, and 
+    high-performance hosting solutions for players and server owners alike.
+  `;
+
+      const observer = new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting) {
+            startTyping(typingText, textContent, 100); // 100ms delay per character
+            observer.disconnect(); // Run only once
+          }
+        },
+        { threshold: 0.5 }
+      );
+
+      observer.observe(document.querySelector("#about"));
+
+      function startTyping(element, text, delay) {
+        let index = 0;
+        function type() {
+          if (index < text.length) {
+            element.textContent += text[index];
+            index++;
+            setTimeout(type, delay);
+          } else {
+            element.classList.add("typing-complete"); // Add the class to remove the cursor
+          }
+        }
+        type();
+      }
+    });
+
+    const backToTopBtn = document.getElementById("back-to-top");
+
+    // Add an event listener to the window for the scroll event
+    window.addEventListener("scroll", () => {
+      if (window.scrollY > 300) {
+        backToTopBtn.classList.remove("hidden");
+        backToTopBtn.style.opacity = "1";
+      } else {
+        backToTopBtn.style.opacity = "0";
+        setTimeout(() => backToTopBtn.classList.add("hidden"), 300);
+      }
+    });
+
     function filterPricing() {
       const selectedServerType = document.getElementById("server-type").value;
       const selectedPlanType = document.getElementById("plan-type").value;
